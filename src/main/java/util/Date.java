@@ -1,5 +1,6 @@
 package util;
 import java.util.Calendar;
+import java.time.LocalDate;
 
 /**
  Date class to represent the year, month, and day
@@ -29,6 +30,14 @@ public class Date implements Comparable<Date> {
         this.year = year;
         this.month = month;
         this.day = day;
+    }
+
+    public Date(LocalDate date) {
+        String dateString = date.toString();
+        String [] tokens = dateString.split("-");
+        this.year = Integer.parseInt(tokens[0]);
+        this.month = Integer.parseInt(tokens[1]);
+        this.day = Integer.parseInt(tokens[2]);
     }
 
     public Date() {
