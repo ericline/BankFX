@@ -1,92 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
 
 <AnchorPane xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.example.rubank.Controller">
 
     <children>
-        <!-- TabPane for managing accounts -->
-        <TabPane prefWidth="600" prefHeight="500" tabClosingPolicy="UNAVAILABLE">
-            <tabs>
-
-                <!-- Open/Close Account Tab -->
-                <Tab text="Open/Close Account">
-                    <content>
-                        <AnchorPane>
-                            <children>
-                                <Label layoutX="50" layoutY="30" text="First Name:" />
-                                <TextField fx:id="firstName" layoutX="150" layoutY="30" />
-
-                                <Label layoutX="50" layoutY="70" text="Last Name:" />
-                                <TextField fx:id="lastName" layoutX="150" layoutY="70" />
-
-                                <Label layoutX="50" layoutY="110" text="Date of Birth:" />
-                                <DatePicker fx:id="dob" layoutX="150" layoutY="110" />
-
-                                <Label layoutX="50" layoutY="150" text="Account Type:" />
-                                <ToggleGroup fx:id="accountTypes" />
-
-                                <RadioButton fx:id="checking" text="Checking" toggleGroup="accountTypes" />
-                                <RadioButton fx:id="savings" text="Savings" toggleGroup="accountTypes" />
-
-                                <Button fx:id="openButton" layoutX="150" layoutY="200" text="Open Account" />
-                                <Button fx:id="closeButton" layoutX="250" layoutY="200" text="Close Account" />
-
-                                <TextArea fx:id="outputArea" layoutX="50" layoutY="250" prefHeight="150" prefWidth="500" />
-                            </children>
-                        </AnchorPane>
-                    </content>
-                </Tab>
-
-                <!-- Deposit/Withdraw Tab -->
-                <Tab text="Deposit/Withdraw">
-                    <content>
-                        <AnchorPane>
-                            <children>
-                                <Label layoutX="50" layoutY="30" text="First Name:" />
-                                <TextField fx:id="userFirstName" layoutX="150" layoutY="30" />
-
-                                <Label layoutX="50" layoutY="70" text="Last Name:" />
-                                <TextField fx:id="userLastName" layoutX="150" layoutY="70" />
-
-                                <Label layoutX="50" layoutY="110" text="Amount:" />
-                                <TextField fx:id="amount" layoutX="150" layoutY="110" />
-
-                                <Label layoutX="50" layoutY="150" text="Account Type:" />
-                                <RadioButton fx:id="userChecking" layoutX="150" layoutY="150" text="Checking">
-                                    <toggleGroup>
-                                        <ToggleGroup fx:id="userAccountTypes" />
-                                    </toggleGroup>
-                                </RadioButton>
-                                <RadioButton fx:id="userSavings" layoutX="250" layoutY="150" text="Savings" toggleGroup="userAccountTypes" />
-
-                                <Button fx:id="depositButton" layoutX="150" layoutY="200" text="Deposit" />
-                                <Button fx:id="withdrawButton" layoutX="250" layoutY="200" text="Withdraw" />
-
-                                <TextArea fx:id="outputTab2" layoutX="50" layoutY="250" prefHeight="150" prefWidth="500" />
-                            </children>
-                        </AnchorPane>
-                    </content>
-                </Tab>
-
-                <!-- Account Database Tab -->
-                <Tab text="Account Database">
-                    <content>
-                        <AnchorPane>
-                            <children>
-                                <Button fx:id="printAccounts" layoutX="100" layoutY="30" text="Print All Accounts" />
-                                <Button fx:id="printInterest" layoutX="300" layoutY="30" text="Print Interets, Fees" />
-
-                                <TextArea fx:id="databaseOutput" layoutX="50" layoutY="80" prefHeight="200" prefWidth="500" />
-                            </children>
-                        </AnchorPane>
-                    </content>
-                </Tab>
-
-            </tabs>
-        </TabPane>
+        <Label layoutX="50.0" layoutY="30.0" text="Hello JavaFX!" />
+        <Button fx:id="testButton" layoutX="50.0" layoutY="70.0" text="Click Me" />
+        <TextArea fx:id="outputArea" layoutX="50.0" layoutY="120.0" prefWidth="300.0" prefHeight="150.0" />
     </children>
 </AnchorPane>
