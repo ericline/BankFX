@@ -16,12 +16,12 @@ public abstract class Account implements Comparable<Account> {
     protected List<Activity> activities; //list of account activities (D or W)
     DecimalFormat formatter = new DecimalFormat("$#,##0.00");
 
-    public final void statement() { //Template Method; DO NOT modify
-        printActivities(); //private helper method
+    public final void statement(Controller controller) {
+        printActivities(controller); //private helper method
         double interest = interest(); //polymorphism based on actual type
         double fee = fee(); //polymorphism based on actual type
-        printInterestFee(interest, fee); //private helper method
-        printBalance(interest, fee); //private helper method
+        printInterestFee(interest, fee, controller); //private helper method
+        printBalance(interest, fee, controller); //private helper method
     }
 
     //add account activity, D or W
@@ -37,21 +37,23 @@ public abstract class Account implements Comparable<Account> {
     public abstract double fee();
     public abstract double dailyInterest();
 
-    private void printActivities() {
+    private void printActivities(Controller controller) {
         if (activities == null || activities.isEmpty()) {
             return; // No activities to print
         }
-        System.out.println("\t[Activity]");
+        controller.print("\t[Activity]");
         for (Activity activity : activities) {
-            System.out.println("\t\t\t" + activity.toString());
+            controller.println("\t\t\t" + activity.toString());
         }
     }
-    private void printInterestFee(double interest, double fee) {
-        System.out.printf("\t[Interest] $%.2f [Fee] $%.2f%n", interest, fee);
+    private void printInterestFee(double interest, double fee, Controller controller) {
+        String output = String.format("\t[Interest] $%.2f [Fee] $%.2f", interest, fee);
+        controller.println(output);
     }
-    private void printBalance(double interest, double fee) {
+    private void printBalance(double interest, double fee, Controller controller) {
         balance += interest - fee;
-        System.out.printf("\t[Balance] $%.2f", balance);
+        String output = String.format("\t[Balance] $%.2f", balance);
+        controller.println(output);
     }
 
     /**

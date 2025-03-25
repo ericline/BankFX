@@ -30,21 +30,19 @@ public class AccountDatabase extends List<Account> {
     }
 
     //print account statements
-    public void printStatements() {
+    public void printStatements(Controller controller) {
         Sort.account(this, 'H');
         int count = 1;
-        Profile previous = this.get(1).getHolder();
+        Profile previous = null;
         for (Account account : this) {
-            if (!previous.equals(account.getHolder())) {
-                System.out.println(count + "." + account.getHolder().getFname()
+            if (previous == null || !previous.equals(account.getHolder())) {
+                controller.println(count + "." + account.getHolder().getFname()
                         + " " + account.getHolder().getLname() + " " + account.getHolder().getDob());
                 count++;
             }
-            System.out.println("\t[Account#] " + account.getNumber().toString());
-            account.statement();
-            System.out.println();
-            System.out.println();
-
+            controller.println("\t[Account#] " + account.getNumber().toString());
+            account.statement(controller);
+            controller.println("\n");
 
             previous = account.getHolder();
 
@@ -75,7 +73,12 @@ public class AccountDatabase extends List<Account> {
             } else if (tokens[0].equalsIgnoreCase("moneymarket")) {
                 type = AccountType.valueOf("MONEY_MARKET");
             } else {
-                type = AccountType.valueOf(tokens[0].toUpperCase());
+                try {
+                    type = AccountType.valueOf(tokens[0].toUpperCase());
+                }
+                catch(Exception e) {
+                    System.out.println("Invalid file: ");
+                }
             }
             Branch branch = Branch.valueOf(tokens[1].toUpperCase());
             Date dob = new Date(tokens[4]);
