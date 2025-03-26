@@ -197,9 +197,9 @@
                                     <Insets right="10.0" />
                                  </padding>
                               </Label>
-                              <TextField fx:id="accountNumber" promptText="9-digits" GridPane.columnIndex="1" />
-                              <TextField fx:id="amount" layoutX="150.0" layoutY="37.0" promptText="amount to deposit or withdraw" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                              <TextField fx:id="firstNameTransaction" promptText="max 20 characters" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                              <TextField fx:id="accountNumber" onAction="#handleClosing" promptText="9-digits" GridPane.columnIndex="1" />
+                              <TextField fx:id="amount" layoutX="150.0" layoutY="37.0" onAction="#handleClosing" promptText="amount to deposit or withdraw" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <TextField fx:id="firstNameTransaction" onAction="#handleClosing" promptText="max 20 characters" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                               <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="50.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
                                  <children>
                                     <Button fx:id="depositButton" mnemonicParsing="false" onAction="#handleDeposit" prefWidth="120.0" text="Deposit" />
@@ -216,8 +216,8 @@
                               </Label>
                               <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="35.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
                                  <children>
-                                    <DatePicker fx:id="closingDate" promptText="closing date" />
-                                    <Button fx:id="closeAccount" mnemonicParsing="false" onAction="#handleOpen" prefWidth="120.0" text="Close" />
+                                    <DatePicker fx:id="closingDate" onAction="#handleClosing" promptText="closing date" />
+                                    <Button fx:id="closeAccount" mnemonicParsing="false" onAction="#handleCloseAccounts" prefWidth="120.0" text="Close" />
                                  </children>
                               </HBox>
                               <Label alignment="CENTER" contentDisplay="RIGHT" layoutX="80.0" layoutY="274.0" text="Last Name" GridPane.halignment="RIGHT" GridPane.rowIndex="7">
@@ -225,7 +225,7 @@
                                     <Insets right="10.0" />
                                  </padding>
                               </Label>
-                              <TextField fx:id="lastNameTransaction" layoutX="149.0" layoutY="269.0" promptText="max 20 characters" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                              <TextField fx:id="lastNameTransaction" layoutX="149.0" layoutY="269.0" onAction="#handleClosing" promptText="max 20 characters" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                               <Label alignment="CENTER" contentDisplay="RIGHT" layoutX="80.0" layoutY="367.0" text="Date of Birth" GridPane.halignment="RIGHT" GridPane.rowIndex="8">
                                  <padding>
                                     <Insets right="10.0" />
@@ -234,7 +234,7 @@
                               <HBox alignment="CENTER_LEFT" layoutX="149.0" layoutY="178.0" prefHeight="100.0" prefWidth="200.0" spacing="35.0" GridPane.columnIndex="1" GridPane.rowIndex="8">
                                  <children>
                                     <DatePicker fx:id="dobTransaction" promptText="date of birth" />
-                                    <Button fx:id="closeAll" mnemonicParsing="false" onAction="#handleOpen" prefWidth="120.0" text="Close All" />
+                                    <Button fx:id="closeAll" mnemonicParsing="false" onAction="#handleCloseAllAccounts" prefWidth="120.0" text="Close All" />
                                  </children>
                               </HBox>
                            </children>
@@ -264,7 +264,7 @@
                               <Button fx:id="printBranch" alignment="CENTER" contentDisplay="CENTER" layoutX="53.0" layoutY="176.0" mnemonicParsing="false" onAction="#handlePrintByBranch" prefWidth="250.0" text="Print by Branch" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
                               <Button fx:id="printType" alignment="CENTER" contentDisplay="CENTER" layoutX="388.0" layoutY="176.0" mnemonicParsing="false" onAction="#handlePrintByType" prefWidth="250.0" text="Print by Type" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
                               <Button fx:id="printStatements" alignment="CENTER" contentDisplay="CENTER" layoutX="53.0" layoutY="295.0" mnemonicParsing="false" onAction="#handlePrintStatements" prefWidth="250.0" text="Print Account Statements" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
-                              <Button fx:id="printArchive" alignment="CENTER" contentDisplay="CENTER" layoutX="388.0" layoutY="295.0" mnemonicParsing="false" prefWidth="250.0" text="Print Archive" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
+                              <Button fx:id="printArchive" alignment="CENTER" contentDisplay="CENTER" layoutX="388.0" layoutY="295.0" mnemonicParsing="false" onAction="#printArchive" prefWidth="250.0" text="Print Archive" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
                            </children>
                         </GridPane>
                      </children></AnchorPane>

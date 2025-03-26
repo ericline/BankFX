@@ -79,6 +79,10 @@ public class MoneyMarket extends Savings {
         return interest * 12 / 365;
     }
 
+    public int getWithdrawals() {
+        return withdrawals;
+    }
+
     /**
      * Calculates the monthly account fee.
      * If the balance is below $2000, a $25 fee is applied.

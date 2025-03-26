@@ -63,10 +63,10 @@ public class Archive {
      * Prints the list of archived accounts.
      * The accounts are printed in the order they were added (most recent first).
      */
-    public void print() {
+    public void print(Controller controller) {
         AccountNode current = first;
         while (current != null) {
-            System.out.println(current.toString());
+            controller.println(current.toString());
             current = current.next;
         }
     }

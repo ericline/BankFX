@@ -23,9 +23,9 @@ public class AccountDatabase extends List<Account> {
         this.archive = new Archive();
     }
     //print closed accounts
-    public void printArchive() {
+    public void printArchive(Controller controller) {
         if (archive != null) {
-            archive.print();
+            archive.print(controller);
         }
     }
 
@@ -58,7 +58,7 @@ public class AccountDatabase extends List<Account> {
         return null;
     }
 
-    public void loadAccounts(File file) throws IOException {
+    public void loadAccounts(File file, Controller controller) throws IOException {
         Scanner scanner = new Scanner(file);
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine().trim();
@@ -109,14 +109,14 @@ public class AccountDatabase extends List<Account> {
             if (account != null) {
                 this.add(account);
             } else {
-                System.out.println("Error: Account creation failed for " + type.name() + " at branch " + branch.name());
+                controller.print("Error: Account creation failed for " + type.name() + " at branch " + branch.name());
             }
         }
         scanner.close();
         System.out.println("Accounts in \"" + file.getName() + "\" loaded to the database.");
     }
 
-    public void processActivities(File file) throws IOException {
+    public void processActivities(File file, Controller controller) throws IOException {
         Scanner scanner = new Scanner(file);
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine().trim();
@@ -138,7 +138,7 @@ public class AccountDatabase extends List<Account> {
                 }
             }
             if (foundAccount == null) {
-                System.out.println("Account " + accountNumber + " not found.");
+                controller.println("Account " + accountNumber + " not found.");
                 continue;
             }
 
@@ -156,7 +156,7 @@ public class AccountDatabase extends List<Account> {
 
             foundAccount.addActivity(activity);
 
-            System.out.println(accountNumber + "::" + activity.toString());
+            controller.println(accountNumber + "::" + activity.toString());
         }
         System.out.println("Account activities in \"" + file.getName() + "\" processed.");
     }

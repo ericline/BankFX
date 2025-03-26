@@ -30,17 +30,18 @@ public class Savings extends Account {
     }
 
     /**
-     * Calculates the monthly interest earned on the savings account.
-     * Base interest rate is 2.5% annually, with an additional 0.25% for loyal customers.
-     *
-     * @return The calculated interest amount.
+     * Determines loyalty based on status.
+     * @param status whether account is loyal.
      */
-
     public void setLoyal(boolean status)
     {
         isLoyal = status;
     }
 
+    /**
+     * Calculates the monthly interest earned on the savings account.
+     * Base interest rate is 2.5% annually, with an additional 0.25% for loyal customers.
+     */
     @Override
     public double interest() {
         double baseRate = 0.025; // 2.5% annual interest

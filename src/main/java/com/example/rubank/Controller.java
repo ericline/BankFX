@@ -11,8 +11,14 @@ import util.Sort;
 import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.time.DateTimeException;
 import java.time.LocalDate;
 
+/**
+ * The Controller class manages the GUI interactions and business logic for the RU Bank application.
+ * It handles user inputs, validates data, and coordinates between the view and model components.
+ * @author Anish Mande, Eric Lin
+ */
 
 public class Controller {
 
@@ -139,9 +145,7 @@ public class Controller {
 
     /**
      * This method will be performed automatically after the fxml is loaded.
-     * Write code to set the initial data for the GUI objects.
-     * Typically, set a list of objects from the backend to the frontend objects,
-     * such as ComboBox (dropdown), or ListView.
+     * Sets initial values for drop down menus and disables set to default.
      */
     public void initialize() {
 
@@ -154,6 +158,10 @@ public class Controller {
 
     }
 
+    /**
+     * Adds date validation to a DatePicker component.
+     * @param datePicker the DatePicker component to validate
+     */
     private void catchDateExeception(DatePicker datePicker) {
         datePicker.getEditor().focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
             if (!isNowFocused) {
@@ -170,6 +178,10 @@ public class Controller {
         });
 
     }
+
+    /**
+     * Disables default components in the account creation form.
+     */
     private void disableDefault() {
         newBrunswick.setDisable(true);
         newark.setDisable(true);
@@ -185,6 +197,10 @@ public class Controller {
         dateOpened.getEditor().clear();
     }
 
+    /**
+     * Handles account type selection changes.
+     * @param event the action event triggering this method
+     */
     @FXML
     private void handleAccountTypes(ActionEvent event) {
         RadioButton selectedType = (RadioButton) accountTypes.getSelectedToggle();
@@ -205,6 +221,11 @@ public class Controller {
             }
         }
     }
+
+    /**
+     * Clears all input fields in the account creation form.
+     * @param event the action event triggering this method
+     */
     @FXML
     private void handleClear(ActionEvent event) {
         firstName.clear();
@@ -225,19 +246,54 @@ public class Controller {
         disableDefault();
     }
 
+
+    /**
+     * Handles disabling and enabling of closing accounts.
+     * @param event the action event triggering this method
+     */
+    @FXML
+    public void handleClosing(ActionEvent event) {
+        boolean hasClosingInfo =
+                closingDate.getValue() != null ||
+                        !firstNameTransaction.getText().trim().isEmpty() ||
+                        !lastNameTransaction.getText().trim().isEmpty() ||
+                        dobTransaction.getValue() != null;
+
+        boolean hasFullProfile =
+                !firstNameTransaction.getText().trim().isEmpty() &&
+                        !lastNameTransaction.getText().trim().isEmpty() &&
+                        dobTransaction.getValue() != null;
+
+        amount.setDisable(hasClosingInfo);
+        accountNumber.setDisable(hasFullProfile);
+
+    }
+
+    /**
+     * Prints text to the output area with a newline.
+     * @param text the text to be printed
+     */
     public void println(String text) {
         output.appendText(text + "\n");
     }
 
+    /**
+     * Prints text to the output area without a newline.
+     * @param text the text to be printed
+     */
     public void print(String text) {
         output.appendText(text);
     }
 
+    /**
+     * Handles the account opening process.
+     * Validates inputs and creates a new account if valid.
+     * @param event the action event triggering this method
+     */
     @FXML
     private void handleOpen(ActionEvent event) {
         String firstNameText = firstName.getText().trim();
         String lastNameText = lastName.getText().trim();
-        LocalDate dobDate = dob.getValue();
         RadioButton selectedAccountType = (RadioButton) accountTypes.getSelectedToggle();
         String initialDepositString = initialDeposit.getText().trim();
         String branchName = branches.getValue();
@@ -258,6 +314,15 @@ public class Controller {
             println("Please fill in initial deposit");
             return;
         }
+        if (branchName == null || branchName.isEmpty()) {
+            println("Please fill in branch name");
+            return;
+        }
+
+        if (firstNameText.length() > 20 || lastNameText.length() > 20) {
+            println("Name over 20 characters, try again.");
+            return;
+        }
 
         double initialDeposit;
         try {
@@ -267,10 +332,19 @@ public class Controller {
             return;
         }
 
+        LocalDate dobDate = null;
+        try {
+            dobDate = dob.getValue();
+        }
+        catch (DateTimeException e) {
+            print("DOB invalid!");
+        }
+
+        System.out.println(dobDate);
         Date dob = null;
         // Validate DOB
         try {
-            dob = new Date(dobDate.getMonthValue(), dobDate.getDayOfMonth(), dobDate.getYear());
+            dob = new Date(dobDate.getYear(), dobDate.getMonthValue(), dobDate.getDayOfMonth());
         }
         catch (NullPointerException e) {
             println("DOB invalid: " + dob + " not a valid calendar date!");
@@ -389,6 +463,10 @@ public class Controller {
                 newAccount.getNumber() + " has been opened.");
     }
 
+    /**
+     * Handles the deposit operation.
+     * Validates inputs and processes the deposit if valid.
+     */
     @FXML
     private void handleDeposit() {
         String accountNumberStr = accountNumber.getText().trim();
@@ -425,6 +503,10 @@ public class Controller {
         println("$" + formatter.format(amount) + " deposited to " + accountNumberStr);
     }
 
+    /**
+     * Handles the withdrawal operation.
+     * Validates inputs and processes the withdrawal if valid.
+     */
     @FXML
     private void handleWithdraw() {
         String accountNumberStr = accountNumber.getText().trim();
@@ -449,6 +531,11 @@ public class Controller {
 
         AccountNumber accountNumber = new AccountNumber(accountNumberStr);
         Account account = accountDatabase.getAccount(accountNumber);
+        if (accountNumber.getType().equals(AccountType.MONEY_MARKET)) {
+            if (((MoneyMarket) account).getWithdrawals() > 3) {
+                println("Exceeded Money Market withdrawal limit.");
+            }
+        }
         if (account == null) {
             println(accountNumberStr + " does not exist.");
             return;
@@ -478,7 +565,152 @@ public class Controller {
             println(" - insufficient funds.");
         }
     }
+    /**
+     * Handles closing of one account with account number
+     * Validates account information and prints interest and fees.
+     */
+    @FXML
+    private void handleCloseAccounts() {
+        String accountNumberStr = accountNumber.getText().trim();
+        if (accountNumberStr.isEmpty()) {
+            println("Account number is empty.");
+            return;
+        }
+        if(!accountNumberStr.matches("\\d{9}")) {
+            println("Invalid account number: \"" + accountNumberStr + "\"");
+        }
 
+        LocalDate closingDateVal = closingDate.getValue();
+        Date closeDate = null;
+        // Validate closeDate
+        try {
+            closeDate = new Date(closingDateVal.getYear(), closingDateVal.getMonthValue(), closingDateVal.getDayOfMonth());
+        }
+        catch (NullPointerException e) {
+            println("Close Date invalid: " + closeDate + " not a valid calendar date!");
+            return;
+        }
+        if (!closeDate.isValid()) {
+            println("Close Date invalid: " + closeDate + " not a valid calendar date!");
+            return;
+        }
+        AccountNumber accountNumber = new AccountNumber(accountNumberStr);
+        Account account = accountDatabase.getAccount(accountNumber);
+        if (account == null) {
+            println(accountNumberStr + " account does not exist.");
+            return;
+        }
+
+        boolean closed = accountDatabase.closeAccount(account, closeDate);
+        if (closed) {
+            if (account.getNumber().getType().equals(AccountType.CD)) {
+                CertificateDeposit cdAccount = (CertificateDeposit) account;
+                double interest = Math.round(cdAccount.interest(closeDate) * 100.0) / 100.0;
+                println("--" + account.getNumber() + " interest earned: $" + formatter.format(interest));
+                if (closeDate.compareTo(cdAccount.getmaturityDate()) < 0) {
+                    double penalty = cdAccount.calculatePenalty(closeDate);
+                    println("--penalty: $" + formatter.format(penalty));
+                }
+            }
+            else {
+                println("Closing account " + accountNumberStr);
+                double interest = Math.round(account.dailyInterest() * closeDate.getDay() * 100.0) / 100.0;
+                println("--interest earned: $" + formatter.format(interest));
+            }
+        }
+        else {
+            println(accountNumberStr + " account does not exist.");
+        }
+    }
+
+    /**
+     * Handles closing of multiple accounts with first name, last name, and dob.
+     * Validates account information and prints interest and fees.
+     */
+    @FXML
+    private void handleCloseAllAccounts()
+    {
+        String firstName = firstNameTransaction.getText().trim();
+        String lastName = lastNameTransaction.getText().trim();
+        LocalDate dobDate = dobTransaction.getValue();
+        LocalDate closingDateVal = closingDate.getValue();
+
+        if (firstName.isEmpty()) {
+            println("Please fill in first name");
+            return;
+        }
+        if (lastName.isEmpty()) {
+            println("Please fill in last name");
+            return;
+        }
+        if (firstName.length() > 20 || lastName.length() > 20) {
+            println("Name over 20 characters, try again.");
+            return;
+        }
+
+        // Validate DOB
+        Date dob = null;
+        try {
+            dob = new Date(dobDate.getYear(), dobDate.getMonthValue(), dobDate.getDayOfMonth());
+        }
+        catch (NullPointerException e) {
+            println("DOB invalid: " + dob + " not a valid calendar date!");
+            return;
+        }
+        if (!dob.isValid()) {
+            println("DOB invalid: " + dob + " not a valid calendar date!");
+            return;
+        }
+        // Valid Close Date
+        Date closeDate = null;
+        try {
+            closeDate = new Date(closingDateVal.getYear(), closingDateVal.getMonthValue(), closingDateVal.getDayOfMonth());
+        }
+        catch (NullPointerException e) {
+            println("DOB invalid: " + dob + " not a valid calendar date!");
+            return;
+        }
+        if (!dob.isValid()) {
+            println("DOB invalid: " + dob + " not a valid calendar date!");
+            return;
+        }
+
+        Profile profile = new Profile(firstName, lastName, dob);
+        boolean found = false;
+        for (int i = accountDatabase.size() - 1; i >= 0; i--) {
+            Account acc = accountDatabase.get(i);
+            if (acc.getHolder().equals(profile)) {
+                if (!found) {
+                    println("Closing accounts for " + profile);
+                    found = true;
+                }
+                if (acc.getNumber().getType().equals(AccountType.CD)) {
+                    CertificateDeposit cdAccount = (CertificateDeposit) acc;
+                    double interest = Math.round(cdAccount.interest(closeDate) * 100.0) / 100.0;
+                    print("--" + acc.getNumber() + " interest earned: $" + formatter.format(interest));
+                    if (closeDate.compareTo(cdAccount.getmaturityDate()) < 0) {
+                        double penalty = cdAccount.calculatePenalty(closeDate);
+                        println("  [penalty] $" + formatter.format(penalty));
+                    }
+                }
+                else {
+                    double interest = Math.round(acc.dailyInterest() * closeDate.getDay() * 100.0) / 100.0;
+                    println("--" + acc.getNumber() + " interest earned: $" + formatter.format(interest));
+                }
+                accountDatabase.closeAccount(acc, closeDate);
+            }
+        }
+        if (!found) {
+            println(profile + " does not have any accounts in the database.");
+        }
+        else {
+            println("All accounts for " + profile + " are closed and moved to archive.");
+        }
+    }
+
+    /**
+     * Loads accounts from a user-selected file into the database.
+     */
     @FXML
     private void handleAccounts() {
         FileChooser fileChooser = new FileChooser();
@@ -489,7 +721,7 @@ public class Controller {
         if (selectedFile != null) {
             println("Processing \"" + selectedFile.getName() + "\"...");
             try {
-                accountDatabase.loadAccounts(selectedFile);
+                accountDatabase.loadAccounts(selectedFile, this);
             } catch (IOException e) {
                 println("Invalid file: " + selectedFile.getName());
                 return;
@@ -505,6 +737,9 @@ public class Controller {
         println("Accounts in \"" + selectedFile.getName() + "\" loaded to the database.");
     }
 
+    /**
+     * Processes account activities from a selected file into the database
+     */
     @FXML
     private void processActivities() {
         FileChooser fileChooser = new FileChooser();
@@ -515,7 +750,7 @@ public class Controller {
         if (selectedFile != null) {
             println("Processing \"" + selectedFile.getName() + "\"...");
             try {
-                accountDatabase.processActivities(selectedFile);
+                accountDatabase.processActivities(selectedFile, this);
             } catch (IOException e) {
                 println("Invalid file: " + selectedFile.getName());
                 return;
@@ -528,6 +763,19 @@ public class Controller {
         println("Accounts in \"" + selectedFile.getName() + "\" loaded to the database.");
     }
 
+    /**
+     * Prints accounts that have been closed and their information.
+     */
+    @FXML
+    private void printArchive() {
+        println("*List of closed accounts in the archive.");
+        accountDatabase.printArchive(this);
+        println("*end of list.");
+    }
+
+    /**
+     * Prints accounts sorted by branch location.
+     */
     @FXML
     private void handlePrintByBranch() {
         println("");
@@ -536,6 +784,9 @@ public class Controller {
         println("*end of list.");
         println("");
     }
+    /**
+     * Prints accounts sorted by account holder.
+     */
     @FXML
     private void handlePrintByHolder() {
         println("");
@@ -544,6 +795,9 @@ public class Controller {
         println("*end of list.");
         println("");
     }
+    /**
+     * Prints accounts sorted by account type.
+     */
     @FXML
     private void handlePrintByType() {
         println("");
@@ -552,6 +806,9 @@ public class Controller {
         println("*end of list.");
         println("");
     }
+    /**
+     * Updates and prints account statements for all accounts.
+     */
     @FXML
     private void handlePrintStatements() {
         println("");
@@ -561,6 +818,11 @@ public class Controller {
         println("");
     }
 
+    /**
+     * Prints accounts sorted according to the specified key.
+     * Prints output to textfield.
+     * @param key the sorting criteria ('H' for holder, 'T' for type, 'B' for branch)
+     */
     public void printSortedAccounts(char key) {
         if (accountDatabase.isEmpty()) {
             println("Account database is empty.");
@@ -604,4 +866,5 @@ public class Controller {
             }
         }
     }
+
 }
