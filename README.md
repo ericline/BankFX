@@ -1,0 +1,4 @@
+- Designed and implemented a JavaFX GUI for a banking system using the MVC pattern.
+- Developed polymorphic banking account classes to handle diverse account rules, dynamic interest/fee calculations and database operations, ensuring accuracy and reducing code duplication through inheritance.
+- Engineered a batch processing system to load accounts and transactions from text files, validating data integrity and logging activities while adhering to account constraints.
+- Tested functionality via 15+ JUnit test cases and black-box GUI tests, handling exceptions to prevent crashes during user interactions.
