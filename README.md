@@ -1,4 +1,36 @@
-- Designed and implemented a JavaFX GUI for a banking system using the MVC pattern.
-- Developed polymorphic banking account classes to handle diverse account rules, dynamic interest/fee calculations and database operations, ensuring accuracy and reducing code duplication through inheritance.
-- Engineered a batch processing system to load accounts and transactions from text files, validating data integrity and logging activities while adhering to account constraints.
-- Tested functionality via 15+ JUnit test cases and black-box GUI tests, handling exceptions to prevent crashes during user interactions.
+## Bank Account Transaction Manager
+
+This Java-based application simulates a simplified banking system that manages various types of personal accounts (e.g., Checking, College Checking, Savings, Money Market, Certificate of Deposit). The system is displayed through a JavaFX GUI and supports core banking functionalities such as:
+
+- Opening/Closing Accounts
+
+- Deposits and Withdrawals
+
+- Transaction History Tracking
+
+- Monthly Statement Generation
+
+- Interest and Fee Calculation
+
+### Features
+
+- Open and close accounts (by account number or profile)
+- Perform deposits and withdrawals with location tagging
+- Track transaction history with detailed timestamps
+- Generate formatted monthly statements
+- Automatically calculate and apply interest and fees
+
+### Technical Design
+
+- Utilizes an `Account` superclass and polymorphic subclasses for each account type
+- Centralized `AccountDatabase` stores active and archived accounts
+- `Activity` tracking system records all transactions
+- Defensive input validation for dates, balances, and account types
+- Edge case handling for:
+  - Age-restricted college accounts
+  - Minimum deposit enforcement for CDs
+  - Withdrawal limits for money market accounts
+
+### Summary
+
+This project demonstrates modular design, object-oriented principles, and robust input handling in a real-world banking simulation. It showcases how to build scalable systems with clear data flow and structured class hierarchies.
